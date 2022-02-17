@@ -14,8 +14,10 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
 public class Walk {
+    // :NOTE: calculateSHA
     private static byte[] SHA(String file) {
         try (InputStream in = Files.newInputStream(Paths.get(file))) {
+            // :NOTE: const
             byte[] bytes = new byte[1024];
             MessageDigest digest = MessageDigest.getInstance("SHA-1");
             int readSize;
@@ -24,16 +26,20 @@ public class Walk {
             }
             return digest.digest();
         } catch (IOException | InvalidPathException | NoSuchAlgorithmException e) {
+            // :NOTE: const
             return new byte[20];
         }
     }
 
     public static void main(String[] args) {
         if (args == null || args.length != 2 || args[0] == null || args[1] == null) {
+            // :NOTE: "Usage: <inputPath> <outputPath>"
             System.err.println("Incorrect arguments");
             return;
         }
+
         Path in;
+
         try {
             in = Paths.get(args[0]);
         } catch (InvalidPathException e) {
@@ -48,9 +54,11 @@ public class Walk {
             return;
         }
         try {
+            // :NOTE: redundant notExists
             if (out.getParent() != null && Files.notExists(out.getParent())) {
                 Files.createDirectories(out.getParent());
             }
+            // :NOTE: SecurityException
         } catch (IOException | SecurityException e) {
             System.err.println("Can't create directories for output");
         }
