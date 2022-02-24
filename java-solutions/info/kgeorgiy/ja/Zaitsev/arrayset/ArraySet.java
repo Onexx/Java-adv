@@ -24,7 +24,7 @@ public class ArraySet<E> extends AbstractSet<E> implements SortedSet<E> {
 
     @Override
     public Iterator<E> iterator() {
-        return arr.iterator();
+        return Collections.unmodifiableList(arr).iterator();
     }
 
     @Override
