@@ -39,9 +39,10 @@ public class ArraySet<E> extends AbstractSet<E> implements SortedSet<E> {
 
     @Override
     public SortedSet<E> subSet(E fromElement, E toElement) {
-        return subSet(fromElement, true, toElement, false);
+        return subSet(fromElement, toElement, false);
     }
 
+    @SuppressWarnings("unchecked cast")
     private int compare(E a, E b) {
         if (comparator() == null) {
             return ((Comparable<? super E>) a).compareTo(b);
@@ -54,7 +55,7 @@ public class ArraySet<E> extends AbstractSet<E> implements SortedSet<E> {
         if (isEmpty() || compare(toElement, first()) < 0) {
             return new ArraySet<>(Collections.emptyList(), cmp);
         }
-        return subSet(first(), true, toElement, false);
+        return subSet(first(), toElement, false);
     }
 
     @Override
@@ -62,7 +63,7 @@ public class ArraySet<E> extends AbstractSet<E> implements SortedSet<E> {
         if (isEmpty() || compare(last(), fromElement) < 0) {
             return new ArraySet<>(Collections.emptyList(), cmp);
         }
-        return subSet(fromElement, true, last(), true);
+        return subSet(fromElement, last(), true);
     }
 
     @Override
@@ -81,6 +82,7 @@ public class ArraySet<E> extends AbstractSet<E> implements SortedSet<E> {
         return arr.get(arr.size() - 1);
     }
 
+    @SuppressWarnings("unchecked cast")
     @Override
     public boolean contains(Object o) {
         return Collections.binarySearch(arr, (E) o, cmp) >= 0;
@@ -96,12 +98,12 @@ public class ArraySet<E> extends AbstractSet<E> implements SortedSet<E> {
         return pos;
     }
 
-
-    private SortedSet<E> subSet(E fromElement, boolean fromInclusive, E toElement, boolean toInclusive) {
+    private SortedSet<E> subSet(E fromElement, E toElement, boolean toInclusive) {
         if (compare(fromElement, toElement) > 0) {
             throw new IllegalArgumentException("fromElement=" + fromElement + " should be less or equal than toElement=" + toElement);
         }
-        int l = findElement(fromElement, fromInclusive ? 0 : 1, fromInclusive ? 0 : 1);
+//        int l = findElement(fromElement, fromInclusive ? 0 : 1, fromInclusive ? 0 : 1);
+        int l = findElement(fromElement, 0, 0);
         int r = findElement(toElement, toInclusive ? 1 : 0, toInclusive ? 1 : 0);
         if (0 <= l && l <= r && r <= size()) {
             return new ArraySet<>(arr.subList(l, r), cmp);
@@ -109,4 +111,5 @@ public class ArraySet<E> extends AbstractSet<E> implements SortedSet<E> {
             return new ArraySet<>(Collections.emptyList(), cmp);
         }
     }
+
 }
