@@ -42,7 +42,7 @@ public class ArraySet<E> extends AbstractSet<E> implements SortedSet<E> {
         return subSet(fromElement, toElement, false);
     }
 
-    @SuppressWarnings("unchecked cast")
+    @SuppressWarnings("unchecked")
     private int compare(E a, E b) {
         if (comparator() == null) {
             return ((Comparable<? super E>) a).compareTo(b);
@@ -82,12 +82,6 @@ public class ArraySet<E> extends AbstractSet<E> implements SortedSet<E> {
         return arr.get(arr.size() - 1);
     }
 
-    @SuppressWarnings("unchecked cast")
-    @Override
-    public boolean contains(Object o) {
-        return Collections.binarySearch(arr, (E) o, cmp) >= 0;
-    }
-
     private int findElement(E elem, int foundShift, int notFoundShift) {
         int pos = Collections.binarySearch(arr, elem, cmp);
         if (pos < 0) {
@@ -96,6 +90,12 @@ public class ArraySet<E> extends AbstractSet<E> implements SortedSet<E> {
             pos = pos + notFoundShift;
         }
         return pos;
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public boolean contains(Object o) {
+        return Collections.binarySearch(arr, (E) o, cmp) >= 0;
     }
 
     private SortedSet<E> subSet(E fromElement, E toElement, boolean toInclusive) {
