@@ -14,11 +14,12 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
 public class Walk {
-    // :NOTE: calculateSHA
-    private static byte[] SHA(String file) {
+    private static final int BUFFER_SIZE = 1024;
+    private static final byte[] EMPTY_SHA = new byte[20];
+
+    private static byte[] calculateSHA(String file) {
         try (InputStream in = Files.newInputStream(Paths.get(file))) {
-            // :NOTE: const
-            byte[] bytes = new byte[1024];
+            byte[] bytes = new byte[BUFFER_SIZE];
             MessageDigest digest = MessageDigest.getInstance("SHA-1");
             int readSize;
             while ((readSize = in.read(bytes)) >= 0) {
@@ -26,26 +27,24 @@ public class Walk {
             }
             return digest.digest();
         } catch (IOException | InvalidPathException | NoSuchAlgorithmException e) {
-            // :NOTE: const
-            return new byte[20];
+            return EMPTY_SHA;
         }
     }
 
     public static void main(String[] args) {
         if (args == null || args.length != 2 || args[0] == null || args[1] == null) {
-            // :NOTE: "Usage: <inputPath> <outputPath>"
-            System.err.println("Incorrect arguments");
+            System.err.println("Incorrect arguments. Usage: <inputPath> <outputPath>");
             return;
         }
 
         Path in;
-
         try {
             in = Paths.get(args[0]);
         } catch (InvalidPathException e) {
             System.err.println("Invalid input file path:" + e.getMessage());
             return;
         }
+
         Path out;
         try {
             out = Paths.get(args[1]);
@@ -54,19 +53,18 @@ public class Walk {
             return;
         }
         try {
-            // :NOTE: redundant notExists
-            if (out.getParent() != null && Files.notExists(out.getParent())) {
+            if (out.getParent() != null) {
                 Files.createDirectories(out.getParent());
             }
-            // :NOTE: SecurityException
-        } catch (IOException | SecurityException e) {
+        } catch (IOException e) {
             System.err.println("Can't create directories for output");
         }
+
         try (BufferedReader reader = Files.newBufferedReader(in, StandardCharsets.UTF_8)) {
             try (BufferedWriter writer = Files.newBufferedWriter(out, StandardCharsets.UTF_8)) {
                 String curFile;
                 while ((curFile = reader.readLine()) != null) {
-                    byte[] hash = SHA(curFile);
+                    byte[] hash = calculateSHA(curFile);
                     writer.write(String.format("%0" + (hash.length * 2) + "x %s%n", new BigInteger(1, hash), curFile));
                 }
             }
