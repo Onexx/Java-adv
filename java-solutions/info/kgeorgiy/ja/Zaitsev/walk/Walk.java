@@ -15,11 +15,13 @@ import java.security.NoSuchAlgorithmException;
 
 public class Walk {
     private static final int BUFFER_SIZE = 1024;
+    // :NOTE: EMPTY_SHA
     private static final byte[] EMPTY_SHA = new byte[20];
 
     private static byte[] calculateSHA(String file) {
         try (InputStream in = Files.newInputStream(Paths.get(file))) {
             byte[] bytes = new byte[BUFFER_SIZE];
+            // :NOTE: move to a const
             MessageDigest digest = MessageDigest.getInstance("SHA-1");
             int readSize;
             while ((readSize = in.read(bytes)) >= 0) {
@@ -27,6 +29,7 @@ public class Walk {
             }
             return digest.digest();
         } catch (IOException | InvalidPathException | NoSuchAlgorithmException e) {
+            // :NOTE: logs
             return EMPTY_SHA;
         }
     }
@@ -69,8 +72,10 @@ public class Walk {
                     writer.write(String.format("%0" + (hash.length * 2) + "x %s%n", new BigInteger(1, hash), curFile));
                 }
             }
+            // :NOTE: do not merge exception
         } catch (IOException e) {
             System.err.println("I/O exception: " + e.getMessage());
+            // :NOTE: securityException
         } catch (SecurityException e) {
             System.err.println("Security exception: " + e.getMessage());
         }
