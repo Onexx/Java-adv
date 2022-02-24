@@ -99,7 +99,7 @@ public class ArraySet<E> extends AbstractSet<E> implements SortedSet<E> {
 
     private SortedSet<E> subSet(E fromElement, boolean fromInclusive, E toElement, boolean toInclusive) {
         if (compare(fromElement, toElement) > 0) {
-            throw new IllegalArgumentException("fromElement=" + fromElement + " > toElement=" + toElement);
+            throw new IllegalArgumentException("fromElement=" + fromElement + " should be less or equal than toElement=" + toElement);
         }
         int l = findElement(fromElement, fromInclusive ? 0 : 1, fromInclusive ? 0 : 1);
         int r = findElement(toElement, toInclusive ? 1 : 0, toInclusive ? 1 : 0);

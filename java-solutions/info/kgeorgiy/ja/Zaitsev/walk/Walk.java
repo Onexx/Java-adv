@@ -58,6 +58,7 @@ public class Walk {
             }
         } catch (IOException e) {
             System.err.println("Can't create directories for output");
+            return;
         }
 
         try (BufferedReader reader = Files.newBufferedReader(in, StandardCharsets.UTF_8)) {
