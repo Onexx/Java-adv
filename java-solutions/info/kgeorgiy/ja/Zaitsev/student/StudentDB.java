@@ -10,8 +10,8 @@ import info.kgeorgiy.java.advanced.student.*;
 
 public class StudentDB implements StudentQuery {
 
-    private static final Function<Student, String> getFullName = student -> student.getFirstName() + ' ' + student.getLastName();
-    private static final Comparator<Student> orderByName = Comparator
+    private static final Function<Student, String> GET_FULL_NAME = student -> student.getFirstName() + ' ' + student.getLastName();
+    private static final Comparator<Student> ORDER_BY_NAME = Comparator
             .comparing(Student::getLastName)
             .thenComparing(Student::getFirstName)
             .reversed().thenComparing(Student::getId);
@@ -37,7 +37,7 @@ public class StudentDB implements StudentQuery {
 
     @Override
     public List<String> getFullNames(List<Student> students) {
-        return getStudentList(students, getFullName);
+        return getStudentList(students, GET_FULL_NAME);
     }
 
     @Override
@@ -61,11 +61,11 @@ public class StudentDB implements StudentQuery {
 
     @Override
     public List<Student> sortStudentsByName(Collection<Student> students) {
-        return sortStudentsByCmp(students, orderByName);
+        return sortStudentsByCmp(students, ORDER_BY_NAME);
     }
 
     private List<Student> findStudentsByPred(Collection<Student> students, Predicate<Student> pred) {
-        return students.stream().filter(pred).sorted(orderByName).collect(Collectors.toList());
+        return students.stream().filter(pred).sorted(ORDER_BY_NAME).collect(Collectors.toList());
     }
 
     @Override
