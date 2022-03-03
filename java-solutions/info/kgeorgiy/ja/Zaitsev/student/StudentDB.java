@@ -16,7 +16,7 @@ public class StudentDB implements StudentQuery {
             .thenComparing(Student::getFirstName)
             .reversed().thenComparing(Student::getId);
 
-    private List<String> getStudentList(List<Student> students, Function<Student, String> function) {
+    private <T> List<T> getStudentList(List<Student> students, Function<Student, T> function) {
         return students.stream().map(function).collect(Collectors.toList());
     }
 
@@ -32,7 +32,7 @@ public class StudentDB implements StudentQuery {
 
     @Override
     public List<GroupName> getGroups(List<Student> students) {
-        return students.stream().map(Student::getGroup).collect(Collectors.toList());
+        return getStudentList(students, Student::getGroup);
     }
 
     @Override
