@@ -16,21 +16,35 @@ import java.security.NoSuchAlgorithmException;
 public class Walk {
     private static final int BUFFER_SIZE = 1024;
     // :NOTE: EMPTY_SHA
-    private static final byte[] EMPTY_SHA = new byte[20];
+    private static final byte[] EMPTY_HASH = new byte[20];
+    // :NOTE: move to a const
+    private static final MessageDigest digest = initDigest();
+
+    private static MessageDigest initDigest() {
+        try {
+            return MessageDigest.getInstance("Sha-1");
+        } catch (NoSuchAlgorithmException e) {
+            System.err.println("Failed to initialise MessageDigest:" + e.getMessage());
+            return null;
+        }
+    }
 
     private static byte[] calculateSHA(String file) {
+        if (digest == null) {
+            return EMPTY_HASH;
+        }
         try (InputStream in = Files.newInputStream(Paths.get(file))) {
             byte[] bytes = new byte[BUFFER_SIZE];
-            // :NOTE: move to a const
-            MessageDigest digest = MessageDigest.getInstance("SHA-1");
+
             int readSize;
             while ((readSize = in.read(bytes)) >= 0) {
                 digest.update(bytes, 0, readSize);
             }
             return digest.digest();
-        } catch (IOException | InvalidPathException | NoSuchAlgorithmException e) {
+        } catch (IOException | InvalidPathException e) {
             // :NOTE: logs
-            return EMPTY_SHA;
+            System.err.println("Failed to read file while calculating hash:" + e.getMessage());
+            return EMPTY_HASH;
         }
     }
 
@@ -71,13 +85,13 @@ public class Walk {
                     byte[] hash = calculateSHA(curFile);
                     writer.write(String.format("%0" + (hash.length * 2) + "x %s%n", new BigInteger(1, hash), curFile));
                 }
+            } catch (IOException e) {
+                System.err.println("I/O exception while writing to output file: " + e.getMessage());
             }
             // :NOTE: do not merge exception
         } catch (IOException e) {
-            System.err.println("I/O exception: " + e.getMessage());
+            System.err.println("I/O exception while reading input file: " + e.getMessage());
             // :NOTE: securityException
-        } catch (SecurityException e) {
-            System.err.println("Security exception: " + e.getMessage());
         }
     }
 }
