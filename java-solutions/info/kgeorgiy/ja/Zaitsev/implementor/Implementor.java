@@ -40,12 +40,12 @@ public class Implementor implements Impler {
         if (!token.isInterface()) {
             throw new ImplerException("Incorrect class token, interface expected");
         }
-        if(Modifier.isPrivate(token.getModifiers())){
+        if (Modifier.isPrivate(token.getModifiers())) {
             throw new ImplerException("Can't implement class from private interface");
         }
 
-        Path packagePath = root.resolve(token.getPackageName().replace('.', File.separatorChar));
-        Path filePath = packagePath.resolve(token.getSimpleName() + "Impl.java");
+        final Path packagePath = root.resolve(token.getPackageName().replace('.', File.separatorChar));
+        final Path filePath = packagePath.resolve(token.getSimpleName() + "Impl.java");
 
         try {
             Files.createDirectories(packagePath);
