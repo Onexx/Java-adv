@@ -23,7 +23,9 @@ public class Implementor implements Impler {
             System.err.println("Incorrect arguments. Usage: <className> <outputPath>");
             return;
         }
+
         final Implementor implementor = new Implementor();
+
         try {
             implementor.implement(Class.forName(args[0]), Paths.get(args[1]));
         } catch (ClassNotFoundException e) {
