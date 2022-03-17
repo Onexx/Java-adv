@@ -52,8 +52,8 @@ public class Implementor implements Impler {
         } catch (IOException e) {
             throw new ImplerException("Can't create package directories");
         }
-        try (BufferedWriter writer = Files.newBufferedWriter(filePath, StandardCharsets.UTF_8)) {
 
+        try (BufferedWriter writer = Files.newBufferedWriter(filePath, StandardCharsets.UTF_8)) {
             if (!token.getPackageName().isEmpty()) {
                 writer.write(String.format("package %s;%n%n", token.getPackageName()));
             }
@@ -63,8 +63,8 @@ public class Implementor implements Impler {
                 writer.write(String.format("\tpublic %s %s(%s) {%n\t\treturn%s;%n\t}%n%n",
                         method.getReturnType().getCanonicalName(),
                         method.getName(),
-                        arguments(method),
-                        defaultValue(method.getReturnType())
+                        getArguments(method),
+                        getDefaultValue(method.getReturnType())
                 ));
             }
             writer.write(String.format("}%n"));
@@ -74,13 +74,13 @@ public class Implementor implements Impler {
         }
     }
 
-    private static String arguments(Method method) {
+    private static String getArguments(Method method) {
         return Arrays.stream(method.getParameters())
                 .map(parameter -> (parameter.getType().getCanonicalName() + ' ' + parameter.getName()))
                 .collect(Collectors.joining(", "));
     }
 
-    private String defaultValue(Class<?> methodReturnType) {
+    private String getDefaultValue(Class<?> methodReturnType) {
         if (!methodReturnType.isPrimitive()) {
             return " null";
         } else if (methodReturnType.equals(boolean.class)) {
