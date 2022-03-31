@@ -80,7 +80,7 @@ public class IterativeParallelism implements ScalarIP {
     }
 
     private <T, R> List<R> process(int threads, List<? extends T> values, Function<List<? extends T>, R> function) throws InterruptedException {
-        threads = Math.min(threads, values.size());
+        threads = Math.max(Math.min(threads, values.size()), 1);
         List<List<? extends T>> lists = split(threads, values);
         Thread[] threadsArr = new Thread[threads];
         List<R> results = new ArrayList<>();
