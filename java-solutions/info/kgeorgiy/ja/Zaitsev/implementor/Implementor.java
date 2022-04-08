@@ -29,6 +29,7 @@ import java.util.zip.ZipEntry;
  *
  * @author Zaitsev Ilya
  */
+// :NOTE: дефолтный конструктор без документации
 public class Implementor implements JarImpler {
     /**
      * Main class for implementor.
@@ -188,7 +189,7 @@ public class Implementor implements JarImpler {
         final JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
         final String classPath;
         try {
-            classPath = dir.getFileName() + File.pathSeparator +
+            classPath = dir.getFileName() + File.pathSeparator + // :NOTE: здесь и ниже лишний toString()
                     Path.of(token.getProtectionDomain().getCodeSource().getLocation().toURI()).toString();
         } catch (URISyntaxException e) {
             throw new ImplerException("Failed to get classPath");
