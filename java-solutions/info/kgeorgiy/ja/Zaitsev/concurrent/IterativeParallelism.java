@@ -1,6 +1,7 @@
 package info.kgeorgiy.ja.Zaitsev.concurrent;
 
 import info.kgeorgiy.java.advanced.concurrent.ScalarIP;
+import info.kgeorgiy.java.advanced.mapper.ParallelMapper;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -16,6 +17,22 @@ import java.util.function.Predicate;
  * @author Zaitsev Ilya
  */
 public class IterativeParallelism implements ScalarIP {
+    private final ParallelMapper parallelMapper;
+
+    /**
+     * Creates {@link IterativeParallelism} without mapper.
+     */
+    public IterativeParallelism() {
+        parallelMapper = null;
+    }
+
+    /**
+     * Creates {@link IterativeParallelism} with given {@link ParallelMapper}.
+     */
+    public IterativeParallelism(ParallelMapper parallelMapper) {
+        this.parallelMapper = parallelMapper;
+    }
+
     /**
      * Returns maximum value.
      *
@@ -82,6 +99,9 @@ public class IterativeParallelism implements ScalarIP {
     private <T, R> List<R> process(int threads, List<? extends T> values, Function<List<? extends T>, R> function) throws InterruptedException {
         threads = Math.max(Math.min(threads, values.size()), 1);
         List<List<? extends T>> lists = split(threads, values);
+        if (parallelMapper != null) {
+            return parallelMapper.map(function, lists);
+        }
         Thread[] threadsArr = new Thread[threads];
         List<R> results = new ArrayList<>();
         for (int i = 0; i < threads; i++) {
