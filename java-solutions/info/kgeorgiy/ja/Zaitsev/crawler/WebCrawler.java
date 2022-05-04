@@ -6,16 +6,31 @@ import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.*;
 
+/**
+ * Implementation of {@link Crawler} interface.
+ * Recursively crawls and downloads web sites.
+ *
+ * @author Zaitcev Ilya
+ */
 public class WebCrawler implements Crawler {
 
     private static final int DEFAULT_DOWNLOADERS = 4;
     private static final int DEFAULT_EXTRACTORS = 4;
     private static final int DEFAULT_PERHOST = 1;
     private static final int DEFAULT_DEPTH = 1;
+
     private final Downloader downloader;
     private final ExecutorService downloaders;
     private final ExecutorService extractors;
 
+    /**
+     * Creates {@link WebCrawler} with provided {@link Downloader}.
+     *
+     * @param downloader  class to use for downloading web pages.
+     * @param downloaders number of threads created for downloading web pages.
+     * @param extractors  number of threads created for extraction of links from web pages.
+     * @param perHost     ignored because of easy version.
+     */
     @SuppressWarnings("unused")
     public WebCrawler(Downloader downloader, int downloaders, int extractors, int perHost) {
         this.downloader = downloader;
@@ -87,6 +102,11 @@ public class WebCrawler implements Crawler {
         extractors.shutdownNow();
     }
 
+    /**
+     * Main function.
+     *
+     * @param args url [depth [downloads [extractors [perHost]]]]
+     * */
     public static void main(String[] args) {
         if (args.length == 0) {
             System.err.println("Incorrect arguments. Usage: WebCrawler url [depth [downloads [extractors [perHost]]]]");
@@ -105,6 +125,15 @@ public class WebCrawler implements Crawler {
         }
     }
 
+    /**
+     * Parses argument from {@code args} on index {@code idx} as {@link Integer}.
+     * If index is out of bounds or parsing finished with error {@code defaultValue} is returned.
+     *
+     * @param args         arguments to get data from.
+     * @param idx          index at which argument should be parsed.
+     * @param defaultValue default value to return if something went wrong.
+     * @return {@code args[idx]} as {@link Integer} or {@code defaultValue} if it's not possible.
+     */
     private static int parseArgOrDefault(String[] args, int idx, int defaultValue) {
         if (idx < args.length) {
             try {
