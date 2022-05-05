@@ -56,6 +56,7 @@ public class WebCrawler implements Crawler {
                 try {
                     final Document document = downloader.download(q);
 
+                    // :NOTE: {}
                     if (phaser.getPhase() + 1 >= depth) return;
 
                     final Runnable extract = () -> {
@@ -98,6 +99,7 @@ public class WebCrawler implements Crawler {
 
     @Override
     public void close() {
+        // :NOTE: shutdownNow
         downloaders.shutdownNow();
         extractors.shutdownNow();
     }
