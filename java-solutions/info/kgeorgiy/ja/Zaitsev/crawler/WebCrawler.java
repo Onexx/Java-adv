@@ -18,6 +18,7 @@ public class WebCrawler implements Crawler {
     private static final int DEFAULT_EXTRACTORS = 4;
     private static final int DEFAULT_PERHOST = 1;
     private static final int DEFAULT_DEPTH = 1;
+    private static final int TIMEOUT = 100;
 
     private final Downloader downloader;
     private final ExecutorService downloaders;
@@ -57,7 +58,9 @@ public class WebCrawler implements Crawler {
                     final Document document = downloader.download(q);
 
                     // :NOTE: {}
-                    if (phaser.getPhase() + 1 >= depth) return;
+                    if (phaser.getPhase() + 1 >= depth) {
+                        return;
+                    }
 
                     final Runnable extract = () -> {
                         try {
@@ -100,8 +103,24 @@ public class WebCrawler implements Crawler {
     @Override
     public void close() {
         // :NOTE: shutdownNow
-        downloaders.shutdownNow();
-        extractors.shutdownNow();
+        shutdown(downloaders);
+        shutdown(extractors);
+    }
+
+
+    private void shutdown(ExecutorService executorService) {
+        executorService.shutdown();
+        try {
+            if (!executorService.awaitTermination(TIMEOUT, TimeUnit.MILLISECONDS)){
+                executorService.shutdownNow();
+                if (!executorService.awaitTermination(TIMEOUT, TimeUnit.MILLISECONDS)){
+                    System.err.println("Couldn't shutdown executorService");
+                }
+            }
+        } catch (InterruptedException e) {
+            executorService.shutdownNow();
+            Thread.currentThread().interrupt();
+        }
     }
 
     /**
