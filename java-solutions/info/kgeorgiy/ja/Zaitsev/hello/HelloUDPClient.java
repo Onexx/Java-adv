@@ -11,7 +11,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
-
 /**
  * Implementation of {@link HelloClient} interface.
  *
@@ -34,8 +33,7 @@ public class HelloUDPClient implements HelloClient {
                     for (int requestNumber = 0; requestNumber < requests; requestNumber++) {
                         while (true) {
                             String name = String.format("%s%d_%d", prefix, threadNumber, requestNumber);
-                            byte[] requestBytes = name.getBytes(StandardCharsets.UTF_8);
-                            DatagramPacket request = new DatagramPacket(requestBytes, requestBytes.length, address);
+                            DatagramPacket request = HelloUtil.compilePacket(name.getBytes(StandardCharsets.UTF_8), address);
                             try {
                                 socket.send(request);
                             } catch (IOException e) {
@@ -49,7 +47,7 @@ public class HelloUDPClient implements HelloClient {
                                 continue;
                             }
 
-                            String responseBody = new String(response.getData(), response.getOffset(), response.getLength(), StandardCharsets.UTF_8);
+                            String responseBody = HelloUtil.getDataAsString(response);
                             if (responseBody.contains(name)) {
                                 System.out.println(responseBody);
                                 break;

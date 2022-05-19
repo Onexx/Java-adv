@@ -1,18 +1,15 @@
 package info.kgeorgiy.ja.Zaitsev.hello;
 
-import info.kgeorgiy.java.advanced.hello.HelloClient;
 import info.kgeorgiy.java.advanced.hello.HelloServer;
 
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.SocketException;
-import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Objects;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-
 
 /**
  * Implementation of {@link HelloServer} interface.
@@ -36,9 +33,8 @@ public class HelloUDPServer implements HelloServer {
                         try {
                             DatagramPacket request = new DatagramPacket(new byte[bufferSize], bufferSize);
                             socket.receive(request);
-                            String name = new String(request.getData(), request.getOffset(), request.getLength(), StandardCharsets.UTF_8);
-                            byte[] responseBody = ("Hello, " + name).getBytes(StandardCharsets.UTF_8);
-                            DatagramPacket response = new DatagramPacket(responseBody, responseBody.length, request.getSocketAddress());
+                            String name = HelloUtil.getDataAsString(request);
+                            DatagramPacket response = HelloUtil.compilePacket(HelloUtil.formResponse(name), request.getSocketAddress());
                             socket.send(response);
                         } catch (IOException e) {
                             if (!socket.isClosed()) {
@@ -56,11 +52,11 @@ public class HelloUDPServer implements HelloServer {
     @Override
     public void close() {
         socket.close();
-        executorService.shutdownNow();
+        HelloUtil.shutdown(executorService);
     }
 
     /**
-     * Main function. Requires exactly 2 arguments. Parses arguments and calls {@link #start} method in {@link HelloUDPClient}.
+     * Main function. Requires exactly 2 arguments. Parses arguments and calls {@link #start} method in {@link HelloUDPServer}.
      *
      * @param args 2 arguments: [port] [threads]
      */
