@@ -8,7 +8,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
 
 public class HelloUtil {
-    private static final int TIMEOUT = 100;
+    private static final int TIMEOUT = 5;
 
     static String getDataAsString(DatagramPacket packet) {
         return new String(packet.getData(), packet.getOffset(), packet.getLength(), StandardCharsets.UTF_8);

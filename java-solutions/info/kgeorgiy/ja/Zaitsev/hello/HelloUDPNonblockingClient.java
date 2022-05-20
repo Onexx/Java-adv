@@ -52,7 +52,6 @@ public class HelloUDPNonblockingClient implements HelloClient {
         try {
             Selector selector = Selector.open();
 
-
             for (int i = 0; i < threads; i++) {
                 DatagramChannel channel = DatagramChannel.open();
                 channel.configureBlocking(false);
